@@ -4,6 +4,9 @@
 - fix prices in config
 - mecano only option in config
 - mecano society money if config enabled
+
+[BUGS]
+- turbo cannot be ennabled
  
 
 [DESCRIPTION]
