@@ -11,15 +11,18 @@ AddEventHandler('esx_lscustom:buyMod', function(price)
 		TriggerClientEvent('esx_lscustom:cancelInstallMod', _source)
 		TriggerClientEvent('esx:showNotification', _source, _U('not_enough_money'))
 	else
-		--xPlayer.removeMoney(price)
-		TriggerClientEvent('esx_lscustom:installMod', _source)
-		TriggerClientEvent('esx:showNotification', _source, _U('purchased'))
-        local societyAccount = nil
-        local societyMoney = price 
-		TriggerEvent('esx_addonaccount:getSharedAccount', 'society_mecano', function(account)
-                  societyAccount = account
-              end)
-         societyAccount.removeMoney(societyMoney)
+		if  Config.IsMecanoJobOnly == true then
+			TriggerClientEvent('esx_lscustom:installMod', _source)
+			TriggerClientEvent('esx:showNotification', _source, _U('purchased'))
+			local societyAccount = nil
+			local societyMoney = price 
+			TriggerEvent('esx_addonaccount:getSharedAccount', 'society_mecano', function(account)
+				societyAccount = account
+			end)
+			societyAccount.removeMoney(societyMoney)
+		 else
+			xPlayer.removeMoney(price)
+		 end
 	end
 end)
 
