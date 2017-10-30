@@ -1,5 +1,6 @@
 ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+local Vehicles = nil
 
 RegisterServerEvent('esx_lscustom:buyMod')
 AddEventHandler('esx_lscustom:buyMod', function(price)
@@ -10,9 +11,15 @@ AddEventHandler('esx_lscustom:buyMod', function(price)
 		TriggerClientEvent('esx_lscustom:cancelInstallMod', _source)
 		TriggerClientEvent('esx:showNotification', _source, _U('not_enough_money'))
 	else
-		xPlayer.removeMoney(price)
+		--xPlayer.removeMoney(price)
 		TriggerClientEvent('esx_lscustom:installMod', _source)
 		TriggerClientEvent('esx:showNotification', _source, _U('purchased'))
+        local societyAccount = nil
+        local societyMoney = price 
+		TriggerEvent('esx_addonaccount:getSharedAccount', 'society_mecano', function(account)
+                  societyAccount = account
+              end)
+         societyAccount.removeMoney(societyMoney)
 	end
 end)
 
@@ -25,4 +32,27 @@ AddEventHandler('esx_lscustom:refreshOwnedVehicle', function(myCar)
 			['@vehicle'] = json.encode(myCar)
 		}
 	)
+end)
+
+ESX.RegisterServerCallback('esx_lscustom:getVehiclesPrices', function(source, cb)
+
+	if Vehicles == nil then
+		MySQL.Async.fetchAll(
+			'SELECT * FROM vehicles',
+			{},
+			function(result)
+				local vehicles = {}
+				for i=1, #result, 1 do
+					table.insert(vehicles,{
+						model = result[i].model,
+						price = result[i].price
+					})
+				end
+				Vehicles = vehicles
+				cb(Vehicles)
+			end
+		)		
+	else
+		cb(Vehicles)
+	end
 end)
