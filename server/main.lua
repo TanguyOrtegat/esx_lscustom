@@ -21,6 +21,8 @@ AddEventHandler('esx_lscustom:buyMod', function(price)
 			end)
 			societyAccount.removeMoney(societyMoney)
 		 else
+			TriggerClientEvent('esx_lscustom:installMod', _source)
+			TriggerClientEvent('esx:showNotification', _source, _U('purchased'))
 			xPlayer.removeMoney(price)
 		 end
 	end
